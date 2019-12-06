@@ -36,7 +36,7 @@ def worker(file_list, q):
                 avg_hash = imagehash.average_hash(img),
                 avg_hash_long = imagehash.average_hash(img, hash_size=32),
                 p_hash = imagehash.phash(img),
-                exif_data = { (k,ExifTags.TAGS[k]):v for k,v in img.getexif().items()},
+                exif_data = { (k,ExifTags.TAGS.get(k, None)):v for k,v in img.getexif().items()},
             )
         )
 
