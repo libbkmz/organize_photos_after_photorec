@@ -1,4 +1,4 @@
-from main import Hashes
+from helpers import Hashes
 from collections import defaultdict, Counter
 import shelve
 import os

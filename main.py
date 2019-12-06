@@ -3,13 +3,14 @@ import os
 import time
 from random import shuffle
 import shelve
-from dataclasses import dataclass
 import imagehash
-from PIL import Image
+from PIL import Image, ExifTags
 import tqdm
 import concurrent.futures as cf
 import multiprocessing as mp
 from more_itertools import divide
+from helpers import Hashes
+
 FOLDER_PATH = "/6TB/data/Transcend_HDD/"
 CF_WORKERS = 6
 
@@ -27,13 +28,6 @@ def get_images():
             if is_image_filename(filepath):
                 yield filepath
 
-@dataclass
-class Hashes:
-    file_path: str
-    avg_hash: imagehash.ImageHash
-    avg_hash_long: imagehash.ImageHash
-    p_hash: imagehash.ImageHash
-
 def worker(file_list, q):
     for filepath in file_list:
         img = Image.open(filepath)
@@ -42,6 +36,7 @@ def worker(file_list, q):
                 avg_hash = imagehash.average_hash(img),
                 avg_hash_long = imagehash.average_hash(img, hash_size=32),
                 p_hash = imagehash.phash(img),
+                exif_data = { (k,ExifTags.TAGS[k]):v for k,v in img.getexif().items()},
             )
         )
 
